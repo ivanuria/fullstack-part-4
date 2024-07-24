@@ -1,14 +1,10 @@
 const config = require('./utils/config')
-
+const logger = require('./utils/logger')
+const middleware = require('./utils/middleware')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
-
-const logger = {
-  info: (...params) => console.log(...params),
-  error: (...params) => console.error(...params)
-}
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -31,6 +27,7 @@ mongoose
 
 app.use(cors())
 app.use(express.json())
+app.use(middleware.requestLogger)
 
 app.get('/api/blogs', (request, response) => {
   Blog
@@ -49,6 +46,9 @@ app.post('/api/blogs', (request, response) => {
       response.status(201).json(result)
     })
 })
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 const PORT = config.PORT
 app.listen(PORT, () => {
