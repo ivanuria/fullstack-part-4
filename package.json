@@ -1,0 +1,39 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.7.0",
+    "@stylistic/eslint-plugin-js": "^2.3.0",
+    "eslint": "^9.7.0",
+    "globals": "^15.8.0",
+    "nodemon": "^3.1.4"
+  },
+  "name": "blog-list",
+  "version": "0.0.1",
+  "description": "Blog Listing for FullStack Open Part 4",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivanuria/fullstack-part-4.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "Iván Uría Rivas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ivanuria/fullstack-part-4/issues"
+  },
+  "homepage": "https://github.com/ivanuria/fullstack-part-4#readme"
+}
