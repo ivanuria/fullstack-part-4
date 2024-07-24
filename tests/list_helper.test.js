@@ -109,5 +109,62 @@ describe('favoriteBlog', () => {
   test('when many blogs are sent, returns the favourite blog', () => {
     assert.deepStrictEqual(listHelper.favoriteBlog(listWithManyBlogs), favouriteBlog)
   })
+})
 
+describe('mostBlogs', () => {
+  test('when no blog in blogs, return null', () => {
+    assert.strictEqual(listHelper.mostBlogs([]), null)
+  })
+
+  const listWithOneBlog = [
+    {
+      'title': 'Let me go',
+      'author': 'Iván Uría',
+      'url': 'let-me-go',
+      'likes': 5,
+      '_id': '66a0bdd4d34f08f4dc7fe156',
+      '__v': 0
+    }
+  ]
+
+  test('when one blog in blogs, return the only author', () => {
+    assert.deepStrictEqual(listHelper.mostBlogs(listWithOneBlog), {
+      author: "Iván Uría",
+      blogs: 1
+    })
+  })
+
+  const listWithManyBlogs = [
+    {
+      'title': 'Where is my mind?',
+      'author': 'Iván Uría',
+      'url': 'whre-is-my-mind',
+      'likes': 3,
+      '_id': '66a0cbe52634428fd8cdf3c8',
+      '__v': 0
+    },
+    {
+      'title': 'Let me go',
+      'author': 'María Haría',
+      'url': 'let-me-go',
+      'likes': 5,
+      '_id': '66a0bdd4d34f08f4dc7fe156',
+      '__v': 0
+    },
+    {
+      'title': 'Wreaking Ball',
+      'author': 'Iván Uría',
+      'url': 'wreaking ball',
+      'likes': 1,
+      '_id': '66a0d07884a5cd6a5c6a64e6',
+      '__v': 0
+    }
+  ]
+
+  test('when many blog in blogs, return the author with the most of blogs', () => {
+    assert.deepStrictEqual(listHelper.mostBlogs(listWithManyBlogs), {
+      author: "Iván Uría",
+      blogs: 2
+    })
+  })
 })
