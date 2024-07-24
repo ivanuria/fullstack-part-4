@@ -7,7 +7,7 @@ const errorsUXTexts = {
   'e00011': error => `Title must be at least ${ error.properties.minlength } characters long`,
   'e00021': error => `Author name must be at least ${ error.properties.minlength } characters long`,
   'e00031': error => `Url must be at least ${ error.properties.minlength } characters long`,
-  'e00032': () => `Url must follow W3 URI rules`
+  'e00032': () => `Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html`
 }
 
 const errorPaths = {
