@@ -60,3 +60,54 @@ describe('totalLikes', () => {
     assert.strictEqual(listHelper.totalLikes(listWithManyBlogs), 9)
   })
 })
+
+describe('favoriteBlog', () => {
+  test('when no blog is sent, returns null', () => {
+    assert.strictEqual(listHelper.favoriteBlog([]), null)
+  })
+
+  const favouriteBlog = {
+    'title': 'Let me go',
+    'author': 'Iván Uría',
+    'url': 'let-me-go',
+    'likes': 5,
+    '_id': '66a0bdd4d34f08f4dc7fe156',
+    '__v': 0
+  }
+
+  test('when one blog is sent, returns the same blog', () => {
+    assert.strictEqual(listHelper.favoriteBlog([favouriteBlog]), favouriteBlog)
+  })
+
+  const listWithManyBlogs = [
+    {
+      'title': 'Where is my mind?',
+      'author': 'Iván Uría',
+      'url': 'whre-is-my-mind',
+      'likes': 3,
+      '_id': '66a0cbe52634428fd8cdf3c8',
+      '__v': 0
+    },
+    {
+      'title': 'Let me go',
+      'author': 'Iván Uría',
+      'url': 'let-me-go',
+      'likes': 5,
+      '_id': '66a0bdd4d34f08f4dc7fe156',
+      '__v': 0
+    },
+    {
+      'title': 'Wreaking Ball',
+      'author': 'Iván Uría',
+      'url': 'wreaking ball',
+      'likes': 1,
+      '_id': '66a0d07884a5cd6a5c6a64e6',
+      '__v': 0
+    }
+  ]
+
+  test('when many blogs are sent, returns the favourite blog', () => {
+    assert.deepStrictEqual(listHelper.favoriteBlog(listWithManyBlogs), favouriteBlog)
+  })
+
+})
