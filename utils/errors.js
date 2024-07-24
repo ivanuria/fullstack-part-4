@@ -7,7 +7,7 @@ const errorsUXTexts = {
   'e00011': error => `Title must be at least ${ error.properties.minlength } characters long`,
   'e00021': error => `Author name must be at least ${ error.properties.minlength } characters long`,
   'e00031': error => `Url must be at least ${ error.properties.minlength } characters long`,
-  'e00032': () => `Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html`
+  'e00032': () => 'Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html'
 }
 
 const errorPaths = {
@@ -49,12 +49,12 @@ const getValidationErrors = (errors) => {
   if (!modelName) {
     return getError('e00001')
   }
-  logger.info("Model name:", modelName[1])
+  logger.info('Model name:', modelName[1])
   const errorList = []
   for (const key of Object.keys(errors.errors)) {
     const error = errors.errors[key]
     if (!errorPaths[modelName[1]] || !errorPaths[modelName[1]][error.path] || !errorPaths[modelName[1]][error.path][error.kind]) {
-      errorList.push(getError("uncaught", error))
+      errorList.push(getError('uncaught', error))
     } else {
       errorList.push(getError(errorPaths[modelName[1]][error.path][error.kind], error))
     }

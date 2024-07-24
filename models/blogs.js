@@ -16,7 +16,7 @@ const blogSchema = new Schema({
     minLength: 3,
     validate :{
       validator: (v) => {
-        return /^([a-zA-Z0-9\-\.\?\,\'\/\\\+\~\{\}\&%\$#_]*)?(\}?)(\/?)$/.test(v)
+        return /^([a-zA-Z0-9\-.?,'/\\+~{}&%$#_]*)?(}?)(\/?)$/.test(v)
       }
     }
   },
