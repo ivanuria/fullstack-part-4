@@ -1,16 +1,17 @@
 const logger = require('./logger')
 const errors = require('./errors')
 
-const errorHandler = (request, response, error) => { // Not Tested Yet
-  logger.error(error.message)
-
+const errorHandler = (error, request, response, next) => { // Not Tested Yet
+  logger.error("Error", error.message)
   if (error.name === 'CastError') {
     return response.status(400).json(errors.getError('e00000', error))
   }
 
   if (error.name === 'ValidationError') {
-    return response.status(400).json(errors.getError('', error))
+    return response.status(400).json(errors.getValidationErrors(error))
   }
+
+  return next(error)
 }
 
 const requestLogger = (request, response, next) => {
