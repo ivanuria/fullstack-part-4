@@ -1,6 +1,7 @@
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
+const { jsonResponseHandler } = require('./utils/helper')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -12,6 +13,8 @@ const blogSchema = new mongoose.Schema({
   url: String,
   likes: Number
 })
+
+blogSchema.set('toJSON', jsonResponseHandler)
 
 const Blog = mongoose.model('Blog', blogSchema)
 

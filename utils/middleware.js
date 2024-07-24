@@ -1,15 +1,6 @@
 const logger = require('./logger')
 const errors = require('./errors')
 
-const requestLogger = (request, response, next) => {
-  logger.info('Method:', request.method)
-  logger.info('Path:  ', request.path)
-  logger.info('Body:  ', request.body)
-  logger.info("---")
-
-  next()
-}
-
 const errorHandler = (request, response, error) => { // Not Tested Yet
   logger.error(error.message)
 
@@ -22,12 +13,21 @@ const errorHandler = (request, response, error) => { // Not Tested Yet
   }
 }
 
+const requestLogger = (request, response, next) => {
+  logger.info('Method:', request.method)
+  logger.info('Path:  ', request.path)
+  logger.info('Body:  ', request.body)
+  logger.info("---")
+
+  next()
+}
+
 const unknownEndpoint = (request, response) => {
   response.status(404).json(errors.getError('404'))
 }
 
 module.exports = {
-  requestLogger,
   errorHandler,
+  requestLogger,
   unknownEndpoint
 }
