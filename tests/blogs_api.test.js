@@ -174,14 +174,36 @@ describe('blogs list api', async () => {
         url: 'ardo-por-dentro',
         likes: 999
       }
-      const savedBlog = await helper.saveBlog(newPost)
+      const savedBlog = (await helper.saveBlog(newPost)).toJSON()
 
       const requestedBlog = await api
-        .get(`/api/blogs/${savedBlog._id}`)
+        .get(`/api/blogs/${savedBlog.id}`)
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(requestedBlog.body, {...newPost, id:savedBlog._id.toString()})
+      assert.deepStrictEqual(requestedBlog.body, {...newPost, id:savedBlog.id})
+    })
+
+    test('malformed id must raise error', async () => {
+      const malformedID = 'malformedID'
+
+      const requestBlog = await api
+        .get(`/api/blogs/${malformedID}`)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(requestBlog.body.error.code, 'e00000')
+    })
+
+    test('correct id not in db must raise error', async () => {
+      const id = await helper.nonExistingId()
+
+      const requestBlog = await api
+        .get(`/api/blogs/${id}`)
+        .expect(404)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(requestBlog.body.error.code, '404')
     })
   })
 })

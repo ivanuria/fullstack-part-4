@@ -36,9 +36,27 @@ const clearBlogs = async () => {
   await Blog.deleteMany({})
 }
 
+const nonExistingId = async () => {
+  const blog = new Blog({
+    title: 'willremovethissoon',
+    url: 'willremovethissoon'
+  })
+  await blog.save()
+  await blog.deleteOne()
+
+  return blog._id.toString()
+}
+
+const allBlogs = async () => {
+  const blogs = Blog.find({})
+  return blogs.map(blog => blog.toJSON())
+}
+
 module.exports = {
   initialBlogs,
   saveBlog,
   saveBlogs,
-  clearBlogs
+  clearBlogs,
+  nonExistingId,
+  allBlogs
 }
