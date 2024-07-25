@@ -5,7 +5,8 @@ const { Schema, model } = require('mongoose')
 const blogSchema = new Schema({
   title: {
     type: String,
-    minLength: 3
+    minLength: 3,
+    required: true
   },
   author: {
     type: String,
@@ -18,7 +19,8 @@ const blogSchema = new Schema({
       validator: (v) => {
         return /^([a-zA-Z0-9\-.?,'/\\+~{}&%$#_]*)?(}?)(\/?)$/.test(v)
       }
-    }
+    },
+    required: true
   },
   likes: {
     type: Number,
