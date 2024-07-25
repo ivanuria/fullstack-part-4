@@ -1,11 +1,13 @@
 const middleware = require('./utils/middleware')
 const blogsRoutes = require('./controllers/blogs')
 const express = require('express')
-const app = express()
 const cors = require('cors')
-const { mongoBdConnect } = require('./utils/mongodb')
+const { mongoDBConnect } = require('./utils/mongodb')
+const logger = require('./utils/logger')
 
-mongoBdConnect()
+const mongod = mongoDBConnect()
+logger.info(mongod)
+const app = express()
 
 app.use(cors())
 app.use(express.json())
@@ -16,4 +18,7 @@ app.use('/api/blogs', blogsRoutes)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
-module.exports = app
+module.exports = {
+  app,
+  mongod
+}

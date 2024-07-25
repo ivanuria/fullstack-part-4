@@ -13,7 +13,7 @@ const doConnection = async (mongoUrl) => {
   }
 }
 
-const mongoBdConnect = async () => {
+const mongoDBConnect = async () => {
   if (config.NODE_ENV !== config.NODE_ENVS.TEST) {
     doConnection(config.MONGODB_URI)
   }
@@ -24,11 +24,21 @@ const mongoBdConnect = async () => {
       const mongod = new MongoMemoryServer()
       await mongod.start()
       doConnection(mongod.getUri())
+      return mongod
     }
-    connectTest()
+    return await connectTest()
+  }
+}
+
+const mongoDBDisconnect = async (mongod) => {
+  logger.info("MongoDBDisconnect", mongod)
+  await mongoose.connection.close()
+  if (config.NODE_ENV === config.NODE_ENVS.TEST) {
+    await mongod.stop()
   }
 }
 
 module.exports = {
-  mongoBdConnect
+  mongoDBConnect,
+  mongoDBDisconnect
 }
