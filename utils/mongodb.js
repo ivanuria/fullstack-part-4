@@ -1,6 +1,5 @@
 const logger = require('./logger')
 const mongoose = require('mongoose')
-const config = require('./config')
 
 const mongoBdConnect = async (mongoUrl) => {
   mongoose.set('strictQuery', false)

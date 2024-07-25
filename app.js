@@ -6,9 +6,19 @@ const app = express()
 const cors = require('cors')
 const { mongoBdConnect } = require('./utils/mongodb')
 
-const mongoUrl = config.MONGODB_URI
+if (config.NODE_ENV !== config.NODE_ENVS.TEST) {
+  mongoBdConnect(config.MONGODB_URI)
+}
 
-mongoBdConnect(mongoUrl)
+if (config.NODE_ENV === config.NODE_ENVS.TEST) {
+  const connectTest = async () => {
+    const { MongoMemoryServer } = require('mongodb-memory-server')
+    const mongod = new MongoMemoryServer()
+    await mongod.start()
+    mongoBdConnect(mongod.getUri())
+  }
+  connectTest()
+}
 
 app.use(cors())
 app.use(express.json())
