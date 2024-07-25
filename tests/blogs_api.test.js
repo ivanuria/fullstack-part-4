@@ -53,13 +53,13 @@ describe('blogs list api', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(response.body, {...newPost, id:response.body.id})/*
-      assert.strictEqual(response.body.author, newPost.author)
-      assert.strictEqual(response.body.url, newPost.url)
-      assert.strictEqual(response.body.likes, newPost.likes)*/
+      assert.deepStrictEqual(response.body, {...newPost, id:response.body.id})
 
       const savedPosts = await helper.allBlogs()
       assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
+
+      const titles = savedPosts.map(post => post.title)
+      assert(titles.includes(newPost.title))
     })
 
     test('without likes creates new blog with 0 likes', async () => {
@@ -74,13 +74,13 @@ describe('blogs list api', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      assert.strictEqual(response.body.title, newPost.title)
-      assert.strictEqual(response.body.author, newPost.author)
-      assert.strictEqual(response.body.url, newPost.url)
-      assert.strictEqual(response.body.likes, 0)
+      assert.deepStrictEqual(response.body, {...newPost, id:response.body.id, likes:0})
 
       const savedPosts = await helper.allBlogs()
       assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
+
+      const titles = savedPosts.map(post => post.title)
+      assert(titles.includes(newPost.title))
     })
 
     test('with no title raises error', async () => {
@@ -100,8 +100,12 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.url, undefined)
       assert.strictEqual(response.body.likes, undefined)
 
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
+
       const errors = response.body.validationErrors.map(error => error.code)
       assert(errors.includes('e00010'))
+
     })
 
     test('with no url raises error', async () => {
@@ -120,6 +124,9 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.author, undefined)
       assert.strictEqual(response.body.url, undefined)
       assert.strictEqual(response.body.likes, undefined)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
 
       const errors = response.body.validationErrors.map(error => error.code)
       assert(errors.includes('e00030'))
@@ -142,6 +149,9 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.author, undefined)
       assert.strictEqual(response.body.url, undefined)
       assert.strictEqual(response.body.likes, undefined)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
 
       const errors = response.body.validationErrors.map(error => error.code)
       assert(errors.includes('e00011'))
@@ -166,6 +176,9 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.author, undefined)
       assert.strictEqual(response.body.url, undefined)
       assert.strictEqual(response.body.likes, undefined)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
 
       const errors = response.body.validationErrors.map(error => error.code)
       assert(errors.includes('e00032'))
