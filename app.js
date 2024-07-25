@@ -1,5 +1,6 @@
 const middleware = require('./utils/middleware')
 const blogsRoutes = require('./controllers/blogs')
+require('express-async-errors')
 const express = require('express')
 const cors = require('cors')
 const { mongoDBConnect } = require('./utils/mongodb')

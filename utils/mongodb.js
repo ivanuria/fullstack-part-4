@@ -9,7 +9,7 @@ const doConnection = async (mongoUrl) => {
     await mongoose.connect(mongoUrl)
     logger.info('Connected to MongoDB', mongoUrl)
   } catch(exception) {
-    logger.error('Error connecting to MongoDB', error.message)
+    logger.error('Error connecting to MongoDB', exception.message)
   }
 }
 
@@ -31,9 +31,9 @@ const mongoDBConnect = async () => {
 }
 
 const mongoDBDisconnect = async (mongod) => {
-  logger.info("MongoDBDisconnect", mongod)
+  logger.info('MongoDBDisconnect', mongod)
   await mongoose.connection.close()
-  if (config.NODE_ENV === config.NODE_ENVS.TEST) {
+  if (config.NODE_ENV === config.NODE_ENVS.TEST && mongod) {
     await mongod.stop()
   }
 }
