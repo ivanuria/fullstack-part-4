@@ -57,4 +57,22 @@ describe('blogs list api', async () => {
     assert.strictEqual(response.body.url, newPost.url)
     assert.strictEqual(response.body.likes, newPost.likes)
   })
+
+  test('post /api/blogs without likes creates new blog with 0 likes', async () => {
+    const newPost = {
+      title: 'Ardo por dentro',
+      author: 'Víctor García',
+      url: 'ardo-por-dentro'
+    }
+    const response = await api
+      .post('/api/blogs')
+      .send(newPost)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.title, newPost.title)
+    assert.strictEqual(response.body.author, newPost.author)
+    assert.strictEqual(response.body.url, newPost.url)
+    assert.strictEqual(response.body.likes, 0)
+  })
 })
