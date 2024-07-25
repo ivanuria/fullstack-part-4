@@ -53,10 +53,10 @@ describe('blogs list api', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      assert.strictEqual(response.body.title, newPost.title)
+      assert.deepStrictEqual(response.body, {...newPost, id:response.body.id})/*
       assert.strictEqual(response.body.author, newPost.author)
       assert.strictEqual(response.body.url, newPost.url)
-      assert.strictEqual(response.body.likes, newPost.likes)
+      assert.strictEqual(response.body.likes, newPost.likes)*/
 
       const savedPosts = await helper.allBlogs()
       assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
