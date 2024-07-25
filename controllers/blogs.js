@@ -25,13 +25,24 @@ blogsRoutes.get('/:id', async (request, response) => {
         }
       })
   }
-    response.status(200).json(blogPost)
+  response.status(200).json(blogPost)
 })
 
 blogsRoutes.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
 
   response.status(204).end()
+})
+
+blogsRoutes.put('/:id', async (request, response) => {
+  const { title, author, url, likes } = request.body
+  const newBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    { title, author, url, likes },
+    { new: true, runValidators: true, context: 'query' }
+  )
+
+  response.status(200).json(newBlog)
 })
 
 module.exports = blogsRoutes
