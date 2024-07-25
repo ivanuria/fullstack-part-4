@@ -3,6 +3,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
     "lodash": "^4.17.21",
     "mongoose": "^8.5.1",
     "morgan": "^1.10.0"
@@ -12,16 +13,18 @@
     "@stylistic/eslint-plugin-js": "^2.3.0",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
-    "nodemon": "^3.1.4"
+    "node-env": "^0.1.6",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   },
   "name": "blog-list",
   "version": "0.0.1",
   "description": "Blog Listing for FullStack Open Part 4",
   "main": "index.js",
   "scripts": {
-    "test": "node --test",
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "test": "NODE_ENV=test node --test",
+    "dev": "NODE_ENV=development nodemon index.js",
+    "start": "NODE_ENV=production node index.js",
     "lint": "eslint .",
     "lintfix": "eslint . --fix"
   },
