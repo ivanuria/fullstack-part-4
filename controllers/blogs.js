@@ -28,4 +28,10 @@ blogsRoutes.get('/:id', async (request, response) => {
     response.status(200).json(blogPost)
 })
 
+blogsRoutes.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id)
+
+  response.status(204).end()
+})
+
 module.exports = blogsRoutes

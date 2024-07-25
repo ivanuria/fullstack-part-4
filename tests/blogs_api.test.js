@@ -57,6 +57,9 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.author, newPost.author)
       assert.strictEqual(response.body.url, newPost.url)
       assert.strictEqual(response.body.likes, newPost.likes)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
     })
 
     test('without likes creates new blog with 0 likes', async () => {
@@ -75,6 +78,9 @@ describe('blogs list api', async () => {
       assert.strictEqual(response.body.author, newPost.author)
       assert.strictEqual(response.body.url, newPost.url)
       assert.strictEqual(response.body.likes, 0)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
     })
 
     test('with no title raises error', async () => {
@@ -204,6 +210,22 @@ describe('blogs list api', async () => {
         .expect('Content-Type', /application\/json/)
 
       assert.strictEqual(requestBlog.body.error.code, '404')
+    })
+  })
+
+  describe('delete /api/blogs/:id', async () => {
+    test('deletes correctly an item', async () => {
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
+
+      const idToDelete = savedPosts[0].id
+
+      await api
+        .delete(`/api/blogs/${idToDelete}`)
+        .expect(204)
+
+        const currentPosts = await helper.allBlogs()
+        assert.strictEqual(currentPosts.length, helper.initialBlogs.length - 1)
     })
   })
 })
