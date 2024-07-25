@@ -21,10 +21,14 @@ const initialBlogs = [
   }
 ]
 
+const saveBlog = async(blog) => {
+  const toSaveBlog = Blog(blog)
+  return await toSaveBlog.save()
+}
+
 const saveBlogs = async (blogs) => {
   for (let initialBlog of blogs) {
-    const blog = Blog(initialBlog)
-    await blog.save()
+    await saveBlog(initialBlog)
   }
 }
 
@@ -34,6 +38,7 @@ const clearBlogs = async () => {
 
 module.exports = {
   initialBlogs,
+  saveBlog,
   saveBlogs,
   clearBlogs
 }

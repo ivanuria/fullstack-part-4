@@ -13,4 +13,10 @@ blogsRoutes.post('/', async (request, response) => {
   response.status(201).json(result)
 })
 
+blogsRoutes.get('/:id', async (request, response) => {
+  const blogPost = await Blog.findById(request.params.id)
+
+  response.status(200).json(blogPost)
+})
+
 module.exports = blogsRoutes
