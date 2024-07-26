@@ -1,11 +1,15 @@
-const deleteAllUsers = async () => {}
+const User = require('../models/users')
 
-const addUser = async (user) => {}
+const deleteAllUsers = async () => {
+  await User.deleteMany({})
+}
 
-const getAllUsers = async () => {}
+const getAllUsers = async () => {
+  const users = await User.find({})
+  return users.map(user => user.toJSON())
+}
 
 module.exports = {
-  addUser,
   deleteAllUsers,
   getAllUsers
 }

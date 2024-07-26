@@ -28,6 +28,6 @@ const blogSchema = new Schema({
   }
 })
 
-blogSchema.set('toJSON', jsonResponseHandler)
+blogSchema.set('toJSON', jsonResponseHandler())
 
 module.exports = model('Blog', blogSchema)

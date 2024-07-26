@@ -12,7 +12,13 @@ const errorsUXTexts = {
   'e00021': error => `Author name must be at least ${ error.properties.minlength } characters long`,
   'e00030': () => 'Url is required',
   'e00031': error => `Url must be at least ${ error.properties.minlength } characters long`,
-  'e00032': () => 'Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html'
+  'e00032': () => 'Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html',
+  'e00040': () => 'Username is required',
+  'e00041': error => `Username must be at least ${ error.properties.minlength } characters long`,
+  'e00050': () => 'Name is required',
+  'e00051': error => `Name must be at least ${ error.properties.minlength } characters long`,
+  'e00060': () => 'Password is required',
+  'e00061': error => `Password must be at least ${ error.properties.minlength } characters long`,
 }
 
 const errorPaths = { // No model is set in every error, so a better coding is to be needed
@@ -27,6 +33,14 @@ const errorPaths = { // No model is set in every error, so a better coding is to
     required: 'e00030',
     minlength: 'e00031',
     'user defined': 'e00032'
+  },
+  username: {
+    required: 'e00040',
+    minlength: 'e00041',
+  },
+  name: {
+    required: 'e00050',
+    minlength: 'e00051',
   }
 }
 

@@ -26,6 +26,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test node --test",
+    "testtrace": "cross-env NODE_ENV=test node --trace-warnings --test",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
     "lint": "eslint .",
