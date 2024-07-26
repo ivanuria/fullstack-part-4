@@ -1,6 +1,7 @@
 const userRoutes = require('express').Router()
 const User = require('../models/users')
 const { addUser } = require('../utils/user_helper')
+const errors = require('../utils/errors')
 
 userRoutes.get('/', async (request, response) => {
   const users = User.find({})
@@ -8,6 +9,14 @@ userRoutes.get('/', async (request, response) => {
 })
 
 userRoutes.post('/', async (request, response) => {
+  if (!request.body.password) {
+    response.status(400).json(errors.wrapValidationErrors([errors.getError('e00060')]))
+  }
+  if (request.body.password.length < 3) {
+    response.status(400).json(errors.wrapValidationErrors([errors.getError('e00061', {
+      properties: { minlength: 3 }
+    })]))
+  }
   const result = await addUser(request.body)
   response.status(201).json(result)
 })

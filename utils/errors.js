@@ -6,7 +6,6 @@ const errorsUXTexts = {
   '401-it': () => 'Invalid Token',
   '401-et': () => 'Expired Token',
   'e00000': () => 'Malformed ID',
-  'e00001': () => '`username` expected to be unique', // Check twice the error
   'e00010': () => 'Title is required',
   'e00011': error => `Title must be at least ${ error.properties.minlength } characters long`,
   'e00021': error => `Author name must be at least ${ error.properties.minlength } characters long`,
@@ -15,6 +14,7 @@ const errorsUXTexts = {
   'e00032': () => 'Url syntax must follow W3 URI rules https://www.w3.org/Addressing/URL/uri-spec.html',
   'e00040': () => 'Username is required',
   'e00041': error => `Username must be at least ${ error.properties.minlength } characters long`,
+  'e00042': error => `Username '${error.value}' already taken`,
   'e00050': () => 'Name is required',
   'e00051': error => `Name must be at least ${ error.properties.minlength } characters long`,
   'e00060': () => 'Password is required',
@@ -37,6 +37,7 @@ const errorPaths = { // No model is set in every error, so a better coding is to
   username: {
     required: 'e00040',
     minlength: 'e00041',
+    unique: 'e00042'
   },
   name: {
     required: 'e00050',
@@ -62,23 +63,44 @@ const getError = (id, error) => {
   }
 }
 
+const wrapValidationErrors = (errorList) => {
+  return {
+    error: 'ValidationErrors',
+    validationErrors: errorList.map(error => error.error)
+  }
+}
+
+const getErrorFromPath = (path, kind, error) => {
+  if ( !errorPaths[path] || !errorPaths[path][kind]) {
+    return getError('uncaught', error)
+  }
+  return getError(errorPaths[path][kind], error)
+}
+
 const getValidationErrors = (errors) => {
   logger.info('getErrors', errors)
   const errorList = []
   for (const key of Object.keys(errors.errors)) {
     const error = errors.errors[key]
-    if ( !errorPaths[error.path] || !errorPaths[error.path][error.kind]) {
-      errorList.push(getError('uncaught', error))
-    } else {
-      errorList.push(getError(errorPaths[error.path][error.kind], error))
-    }
+    errorList.push(getErrorFromPath(error.path, error.kind, error))
   }
-  return {
-    validationErrors: errorList.map(error => error.error)
-  }
+  return wrapValidationErrors(errorList)
+}
+
+const getMongoServerError = (kind, error) => {
+  logger.info('unique error', error)
+  const [path, value] = Object.entries(error.keyValue)[0]
+  return wrapValidationErrors([getErrorFromPath(path, kind, {
+    message: `${path} must be ${kind}`,
+    value: value,
+    path: path,
+    kind: kind
+  })])
 }
 
 module.exports = {
   getError,
-  getValidationErrors
+  wrapValidationErrors,
+  getValidationErrors,
+  getMongoServerError
 }
