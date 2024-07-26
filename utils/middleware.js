@@ -11,6 +11,18 @@ const errorHandler = (error, request, response, next) => { // Not Tested Yet
     return response.status(400).json(errors.getValidationErrors(error))
   }
 
+  if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
+    return response.status(400).json(errors.getError('e00001', error))
+  }
+
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json(errors.getError('401-it', error))
+  }
+
+  if (error.name === 'TokenExpiredError') {
+    return response.status(401).json(errors.getError('401-et', error))
+  }
+
   return next(error)
 }
 

@@ -2,7 +2,11 @@ const logger = require('./logger')
 
 const errorsUXTexts = {
   '404': () => 'Endpoint not found',
+  '401': () => 'Unauthorized',
+  '401-it': () => 'Invalid Token',
+  '401-et': () => 'Expired Token',
   'e00000': () => 'Malformed ID',
+  'e00001': () => '`username` expected to be unique', // Check twice the error
   'e00010': () => 'Title is required',
   'e00011': error => `Title must be at least ${ error.properties.minlength } characters long`,
   'e00021': error => `Author name must be at least ${ error.properties.minlength } characters long`,
