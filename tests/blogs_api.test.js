@@ -21,11 +21,11 @@ describe('blogs list api', async () => {
     await addUser(rootUser)
     user = (await getAllUsers())[0].id
     const login = await api
-        .post('/api/login')
-        .send({
-          username: rootUser.username,
-          password: rootUser.password
-        })
+      .post('/api/login')
+      .send({
+        username: rootUser.username,
+        password: rootUser.password
+      })
     token = login.body.token
   })
 
@@ -260,6 +260,7 @@ describe('blogs list api', async () => {
 
       await api
         .delete(`/api/blogs/${idToDelete}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const currentPosts = await helper.allBlogs()

@@ -50,25 +50,38 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
-const verifyLogin = async (request, response, next) => {
-  if (!request.token) {
+const extractUser = async (request, response, next) => {
+  console.log('extractUser')
+  if (request.token) {
+    const decodedToken = jwt.verify(request.token, config.SECRET)
+    const user = await getUser(decodedToken.id, true)
+    request._decodedToken = decodedToken
+    request._user = user
+    request.user = user.toJSON()
+  }
+  next()
+}
+
+const restricted = async (request, response, next) => {
+  console.log('restricted')
+  const decodedToken = request._decodedToken
+  const user = request._user
+
+  if (!(request.token && user && decodedToken)) {
     return response.status(401).json(errors.getError('401-it'))
   }
-  const decodedToken = jwt.verify(request.token, config.SECRET)
+
   if (!(decodedToken.id && decodedToken.hash)) {
     return response.status(401).json(errors.getError('401-it'))
   }
 
-  const user = await getUser(decodedToken.id, true)
-
-  if (user.hash != decodedToken.hash) {
+  if (user.hash !== decodedToken.hash) {
     return response.status(401).json(errors.getError('401-it'))
   }
+
   if (user.expireAt < new Date()) {
     return response.status(401).json(errors.getError('401-it'))
   }
-
-  request.user = user.toJSON()
 
   next()
 }
@@ -78,5 +91,6 @@ module.exports = {
   requestLogger,
   unknownEndpoint,
   tokenExtractor,
-  verifyLogin
+  extractUser,
+  restricted
 }

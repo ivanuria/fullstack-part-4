@@ -1,7 +1,8 @@
 const blogsRoutes = require('express').Router()
 const Blog = require('../models/blogs')
-const { getAllUsers, updateUser } = require('../utils/user_helper')
+const { updateUser } = require('../utils/user_helper')
 const middleware = require('../utils/middleware')
+const errors = require('../utils/errors')
 
 blogsRoutes.get('/', async (request, response) => {
   const blogs = await Blog
@@ -16,7 +17,7 @@ blogsRoutes.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRoutes.post('/', middleware.verifyLogin ,async (request, response) => {
+blogsRoutes.post('/', middleware.restricted, async (request, response) => {
   const user = request.user
 
   const postToUpload = {
@@ -57,8 +58,16 @@ blogsRoutes.get('/:id', async (request, response) => {
   response.status(200).json(blogPost)
 })
 
-blogsRoutes.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
+blogsRoutes.delete('/:id', middleware.restricted, async (request, response) => {
+  const user = request.user
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog.user.toString() !== user.id) {
+    return response.status(401).json(errors.getError('401'))
+  }
+
+  await blog.deleteOne()
 
   response.status(204).end()
 })

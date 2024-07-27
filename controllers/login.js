@@ -4,7 +4,6 @@ const loginRouter = require('express').Router()
 const helper = require('../utils/user_helper')
 const { getError } = require('../utils/errors')
 const config = require('../utils/config')
-const logger = require('../utils/logger')
 
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body
