@@ -37,6 +37,12 @@ const rootUser = {
   name: 'I am ROOT'
 }
 
+const otherUser = {
+  username: 'despistaos',
+  password: 'fisicaoquimica',
+  name: 'Despistaos'
+}
+
 const addUser = async (user) => {
   const { username, name, password } = user
   const passwordHash = await bcrypt.hash(password, config.SALT_ROUNDS) // Repeated
@@ -55,5 +61,6 @@ module.exports = {
   getUserByUsername,
   updateUser,
   rootUser,
+  otherUser,
   getUser
 }

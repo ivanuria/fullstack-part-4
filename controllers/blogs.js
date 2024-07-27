@@ -29,7 +29,7 @@ blogsRoutes.post('/', middleware.restricted, async (request, response) => {
 
   const result = await blog.save()
 
-  updateUser(user.id, {
+  await (user.id, {
     blogs: user.blogs.concat(result._id.toString())
   })
 
@@ -68,6 +68,10 @@ blogsRoutes.delete('/:id', middleware.restricted, async (request, response) => {
   }
 
   await blog.deleteOne()
+
+  await updateUser(user.id, {
+    blogs: user.blogs.filter(id => id.toString() !== request.params.id)
+  })
 
   response.status(204).end()
 })

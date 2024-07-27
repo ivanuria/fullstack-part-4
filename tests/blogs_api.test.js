@@ -4,12 +4,14 @@ const { app, mongod } = require('../app')
 const supertest = require('supertest')
 const { mongoDBDisconnect } = require('../utils/mongodb')
 const helper = require('./blogs_list_helper')
-const { rootUser, deleteAllUsers, getAllUsers, addUser } = require('../utils/user_helper')
+const { rootUser, otherUser, deleteAllUsers, getAllUsers, addUser } = require('../utils/user_helper')
 
 const api = supertest(app)
 
 var user
 var token
+var user2
+var token2
 
 describe('blogs list api', async () => {
   after(async () => {
@@ -20,13 +22,22 @@ describe('blogs list api', async () => {
     await deleteAllUsers()
     await addUser(rootUser)
     user = (await getAllUsers())[0].id
-    const login = await api
+    let login = await api
       .post('/api/login')
       .send({
         username: rootUser.username,
         password: rootUser.password
       })
     token = login.body.token
+    await addUser(otherUser)
+    user2 = (await getAllUsers())[0].id
+    login = await api
+      .post('/api/login')
+      .send({
+        username: otherUser.username,
+        password: otherUser.password
+      })
+    token2 = login.body.token
   })
 
   beforeEach(async () => {
@@ -80,6 +91,25 @@ describe('blogs list api', async () => {
 
       const titles = savedPosts.map(post => post.title)
       assert(titles.includes(newPost.title))
+    })
+
+    test('no token raises error', async () => {
+      const newPost = {
+        title: 'Ardo por dentro',
+        author: 'Víctor García',
+        url: 'ardo-por-dentro',
+        likes: 999
+      }
+      const response = await api
+        .post('/api/blogs')
+        .send(newPost)
+        .expect(401)
+        .expect('Content-Type', /application\/json/)
+
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
+
+      assert.strictEqual(response.body.error.code, '401')
     })
 
     test('without likes creates new blog with 0 likes', async () => {
@@ -265,6 +295,23 @@ describe('blogs list api', async () => {
 
       const currentPosts = await helper.allBlogs()
       assert.strictEqual(currentPosts.length, helper.initialBlogs.length - 1)
+    })
+
+    test('try to delete unowned blog raises error', async () => {
+      const savedPosts = await helper.allBlogs()
+      assert.strictEqual(savedPosts.length, helper.initialBlogs.length)
+
+      const idToDelete = savedPosts[0].id
+
+      const response = await api
+        .delete(`/api/blogs/${idToDelete}`)
+        .set('Authorization', `Bearer ${token2}`)
+        .expect(401)
+
+      const currentPosts = await helper.allBlogs()
+      assert.strictEqual(currentPosts.length, helper.initialBlogs.length)
+
+      assert.strictEqual(response.body.error.code, '401')
     })
   })
 

@@ -68,19 +68,19 @@ const restricted = async (request, response, next) => {
   const user = request._user
 
   if (!(request.token && user && decodedToken)) {
-    return response.status(401).json(errors.getError('401-it'))
+    return response.status(401).json(errors.getError('401'))
   }
 
   if (!(decodedToken.id && decodedToken.hash)) {
-    return response.status(401).json(errors.getError('401-it'))
+    return response.status(401).json(errors.getError('401'))
   }
 
   if (user.hash !== decodedToken.hash) {
-    return response.status(401).json(errors.getError('401-it'))
+    return response.status(401).json(errors.getError('401'))
   }
 
   if (user.expireAt < new Date()) {
-    return response.status(401).json(errors.getError('401-it'))
+    return response.status(401).json(errors.getError('401'))
   }
 
   next()
