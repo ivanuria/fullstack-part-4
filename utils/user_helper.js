@@ -19,6 +19,14 @@ const getUserByUsername = async (username, raw=false) => {
   return user.toJSON()
 }
 
+const getUser = async (id, raw=false) => {
+  const user = await User.findById(id)
+  if (raw) {
+    return user
+  }
+  return user.toJSON()
+}
+
 const updateUser = async (id, newData) => {
   await User.findByIdAndUpdate(id, newData)
 }
@@ -40,16 +48,12 @@ const addUser = async (user) => {
   return await newUser.save()
 }
 
-const verifyToken = (token) => {
-
-}
-
 module.exports = {
   addUser,
-  verifyToken,
   deleteAllUsers,
   getAllUsers,
   getUserByUsername,
   updateUser,
-  rootUser
+  rootUser,
+  getUser
 }

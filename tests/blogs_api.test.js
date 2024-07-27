@@ -9,6 +9,7 @@ const { rootUser, deleteAllUsers, getAllUsers, addUser } = require('../utils/use
 const api = supertest(app)
 
 var user
+var token
 
 describe('blogs list api', async () => {
   after(async () => {
@@ -19,6 +20,13 @@ describe('blogs list api', async () => {
     await deleteAllUsers()
     await addUser(rootUser)
     user = (await getAllUsers())[0].id
+    const login = await api
+        .post('/api/login')
+        .send({
+          username: rootUser.username,
+          password: rootUser.password
+        })
+    token = login.body.token
   })
 
   beforeEach(async () => {
@@ -60,6 +68,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -81,6 +90,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -102,6 +112,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(400)
         .expect('Content-Type', /application\/json/)
@@ -127,6 +138,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(400)
         .expect('Content-Type', /application\/json/)
@@ -152,6 +164,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(400)
         .expect('Content-Type', /application\/json/)
@@ -179,6 +192,7 @@ describe('blogs list api', async () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newPost)
         .expect(400)
         .expect('Content-Type', /application\/json/)

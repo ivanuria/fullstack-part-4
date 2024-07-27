@@ -1,6 +1,7 @@
 const blogsRoutes = require('express').Router()
 const Blog = require('../models/blogs')
 const { getAllUsers, updateUser } = require('../utils/user_helper')
+const middleware = require('../utils/middleware')
 
 blogsRoutes.get('/', async (request, response) => {
   const blogs = await Blog
@@ -15,9 +16,8 @@ blogsRoutes.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRoutes.post('/', async (request, response) => {
-  const users = await getAllUsers()
-  const user = users[0]
+blogsRoutes.post('/', middleware.verifyLogin ,async (request, response) => {
+  const user = request.user
 
   const postToUpload = {
     ...request.body,
@@ -29,7 +29,6 @@ blogsRoutes.post('/', async (request, response) => {
   const result = await blog.save()
 
   updateUser(user.id, {
-    ...user,
     blogs: user.blogs.concat(result._id.toString())
   })
 
