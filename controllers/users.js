@@ -4,7 +4,7 @@ const { addUser } = require('../utils/user_helper')
 const errors = require('../utils/errors')
 
 userRoutes.get('/', async (request, response) => {
-  const users = User.find({})
+  const users = await User.find({})
   response.status(200).json(users)
 })
 

@@ -24,6 +24,22 @@ describe('user administration', async () => {
     await mongoDBDisconnect(await mongod)
   })
 
+  describe('get /api/users', async () => {
+    test('returns correct amount of users and no sensible data', async() => {
+      const users = await api
+        .get('/api/users')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(users.body.length, 1)
+      assert.strictEqual(users.body[0].username, rootUser.username)
+      assert.strictEqual(users.body[0].name, rootUser.name)
+      assert(!(users.body[0].password))
+      assert(!(users.body[0].passwordHash))
+      assert(!(users.body[0].currentHash))
+    })
+  })
+
   describe('post /api/users', async () => {
     test('adding a correct brand-new user', async () => {
       const dataToAdd = {
