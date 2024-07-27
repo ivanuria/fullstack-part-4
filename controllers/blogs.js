@@ -1,20 +1,50 @@
 const blogsRoutes = require('express').Router()
 const Blog = require('../models/blogs')
+const { getAllUsers, updateUser } = require('../utils/user_helper')
 
 blogsRoutes.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
+    .populate('user',
+      {
+        username: 1,
+        name: 1
+      }
+    )
+
   response.json(blogs)
 })
 
 blogsRoutes.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const users = await getAllUsers()
+  const user = users[0]
+
+  const postToUpload = {
+    ...request.body,
+    user: user.id
+  }
+
+  const blog = new Blog(postToUpload)
 
   const result = await blog.save()
+
+  updateUser(user.id, {
+    ...user,
+    blogs: user.blogs.concat(result._id.toString())
+  })
+
   response.status(201).json(result)
 })
 
 blogsRoutes.get('/:id', async (request, response) => {
-  const blogPost = await Blog.findById(request.params.id)
+  const blogPost = await Blog
+    .findById(request.params.id)
+    .populate('user',
+      {
+        username: 1,
+        name: 1
+      }
+    )
   if (!blogPost) {
     return response
       .status(404)

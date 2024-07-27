@@ -1,20 +1,29 @@
-const { describe, test, after, beforeEach } = require('node:test')
+const { describe, test, after, beforeEach, before } = require('node:test')
 const assert = require('node:assert')
 const { app, mongod } = require('../app')
 const supertest = require('supertest')
 const { mongoDBDisconnect } = require('../utils/mongodb')
 const helper = require('./blogs_list_helper')
+const { rootUser, deleteAllUsers, getAllUsers, addUser } = require('../utils/user_helper')
 
 const api = supertest(app)
+
+var user
 
 describe('blogs list api', async () => {
   after(async () => {
     await mongoDBDisconnect(await mongod)
   })
 
+  before(async () => {
+    await deleteAllUsers()
+    await addUser(rootUser)
+    user = (await getAllUsers())[0].id
+  })
+
   beforeEach(async () => {
     await helper.clearBlogs()
-    await helper.saveBlogs(helper.initialBlogs)
+    await helper.saveBlogs(helper.initialBlogs.map(blog => { return { ...blog, user } }))
   })
 
   describe('get /api/blogs', async () => {
@@ -25,6 +34,8 @@ describe('blogs list api', async () => {
         .expect('Content-Type', /application\/json/)
 
       assert.strictEqual(response.body.length, helper.initialBlogs.length)
+
+      assert(response.body.map(blog => blog.user.username).every(username => username === rootUser.username))
     })
 
     test('returns the correct id for objects under >>id<< instead of >>_id<<', async () => {
@@ -53,7 +64,7 @@ describe('blogs list api', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(response.body, { ...newPost, id:response.body.id })
+      assert.deepStrictEqual(response.body, { ...newPost, id:response.body.id, user })
 
       const savedPosts = await helper.allBlogs()
       assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
@@ -74,7 +85,7 @@ describe('blogs list api', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(response.body, { ...newPost, id:response.body.id, likes:0 })
+      assert.deepStrictEqual(response.body, { ...newPost, id:response.body.id, likes:0, user })
 
       const savedPosts = await helper.allBlogs()
       assert.strictEqual(savedPosts.length, helper.initialBlogs.length + 1)
@@ -262,7 +273,7 @@ describe('blogs list api', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(updatedPost.body, { ...updatePost, id:idToUpdate })
+      assert.deepStrictEqual(updatedPost.body, { ...updatePost, id:idToUpdate, user })
 
       const currentPosts = await helper.allBlogs()
       assert.strictEqual(currentPosts.length, helper.initialBlogs.length)
@@ -298,7 +309,7 @@ describe('blogs list api', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(updatedPost.body, { ...postToUpdate, ...updatePost })
+      assert.deepStrictEqual(updatedPost.body, { ...postToUpdate, ...updatePost, user })
 
       const currentPosts = await helper.allBlogs()
       assert.strictEqual(currentPosts.length, helper.initialBlogs.length)
@@ -334,7 +345,7 @@ describe('blogs list api', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(updatedPost.body, { ...postToUpdate, ...updatePost })
+      assert.deepStrictEqual(updatedPost.body, { ...postToUpdate, ...updatePost, user })
 
       const currentPosts = await helper.allBlogs()
       assert.strictEqual(currentPosts.length, helper.initialBlogs.length)

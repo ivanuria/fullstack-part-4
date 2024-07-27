@@ -3,20 +3,13 @@ const assert = require('node:assert')
 const { app, mongod } = require('../app')
 const supertest = require('supertest')
 const { mongoDBDisconnect } = require('../utils/mongodb')
-const helper = require('./users_helper')
-const { addUser } = require('../utils/user_helper')
+const { rootUser, deleteAllUsers, getAllUsers, addUser } = require('../utils/user_helper')
 
 const api = supertest(app)
 
-const rootUser = {
-  username: 'root',
-  password: 'iamroot',
-  name: 'I am ROOT'
-}
-
 describe('user administration', async () => {
   beforeEach(async () => {
-    await helper.deleteAllUsers()
+    await deleteAllUsers()
     await addUser(rootUser)
   })
 
@@ -34,6 +27,7 @@ describe('user administration', async () => {
       assert.strictEqual(users.body.length, 1)
       assert.strictEqual(users.body[0].username, rootUser.username)
       assert.strictEqual(users.body[0].name, rootUser.name)
+      assert(users.body[0].blogs)
       assert(!(users.body[0].password))
       assert(!(users.body[0].passwordHash))
       assert(!(users.body[0].currentHash))
@@ -48,7 +42,7 @@ describe('user administration', async () => {
         password : 'password'
       }
 
-      const usersStartAt = await helper.getAllUsers()
+      const usersStartAt = await getAllUsers()
 
       await api
         .post('/api/users')
@@ -56,7 +50,7 @@ describe('user administration', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtEnd.length, usersStartAt.length + 1)
 
       const usernames = usersAtEnd.map(user => user.username)
@@ -70,7 +64,7 @@ describe('user administration', async () => {
         password : 'password'
       }
 
-      const usersAtStart = await helper.getAllUsers()
+      const usersAtStart = await getAllUsers()
 
       const result = await api
         .post('/api/users')
@@ -82,7 +76,7 @@ describe('user administration', async () => {
       assert(errorcodes.includes('e00040'))
       assert(errorcodes.includes('e00050'))
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
     test('short username or short name raises error', async () => {
@@ -92,7 +86,7 @@ describe('user administration', async () => {
         password : 'password'
       }
 
-      const usersAtStart = await helper.getAllUsers()
+      const usersAtStart = await getAllUsers()
 
       const result = await api
         .post('/api/users')
@@ -104,7 +98,7 @@ describe('user administration', async () => {
       assert(errorcodes.includes('e00041'))
       assert(errorcodes.includes('e00051'))
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
 
@@ -115,7 +109,7 @@ describe('user administration', async () => {
         password : 'password'
       }
 
-      const usersAtStart = await helper.getAllUsers()
+      const usersAtStart = await getAllUsers()
 
       const result = await api
         .post('/api/users')
@@ -126,7 +120,7 @@ describe('user administration', async () => {
       const errorcodes = result.body.validationErrors.map(error => error.code)
       assert(errorcodes.includes('e00042'))
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
 
@@ -137,7 +131,7 @@ describe('user administration', async () => {
         password : ''
       }
 
-      const usersAtStart = await helper.getAllUsers()
+      const usersAtStart = await getAllUsers()
 
       const result = await api
         .post('/api/users')
@@ -148,7 +142,7 @@ describe('user administration', async () => {
       const errorcodes = result.body.validationErrors.map(error => error.code)
       assert(errorcodes.includes('e00060'))
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
 
@@ -159,7 +153,7 @@ describe('user administration', async () => {
         password : 'me'
       }
 
-      const usersAtStart = await helper.getAllUsers()
+      const usersAtStart = await getAllUsers()
 
       const result = await api
         .post('/api/users')
@@ -170,7 +164,7 @@ describe('user administration', async () => {
       const errorcodes = result.body.validationErrors.map(error => error.code)
       assert(errorcodes.includes('e00061'))
 
-      const usersAtEnd = await helper.getAllUsers()
+      const usersAtEnd = await getAllUsers()
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
   })

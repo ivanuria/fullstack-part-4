@@ -9,6 +9,7 @@ const jsonResponseHandler = (deletions) => {
           if (returnedObject[toDelete]) delete returnedObject[toDelete]
         }
       }
+
     }
   }
 }

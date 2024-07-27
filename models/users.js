@@ -25,7 +25,13 @@ const userSchema = new Schema({
   },
   expiresAt: {
     type: Date
-  }
+  },
+  blogs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 })
 
 userSchema.set('toJSON', jsonResponseHandler(['passwordHash', 'currentHash']))

@@ -8,6 +8,10 @@ const blogSchema = new Schema({
     minLength: 3,
     required: true
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   author: {
     type: String,
     minLength: 3
@@ -17,7 +21,7 @@ const blogSchema = new Schema({
     minLength: 3,
     validate :{
       validator: (v) => {
-        return /^([a-zA-Z0-9\-.?,'/\\+~{}&%$#_]*)?(}?)(\/?)$/.test(v)
+        return /^([(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6})?([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(v) // Admits improvement
       }
     },
     required: true
