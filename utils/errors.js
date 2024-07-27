@@ -3,6 +3,7 @@ const logger = require('./logger')
 const errorsUXTexts = {
   '404': () => 'Endpoint not found',
   '401': () => 'Unauthorized',
+  '404-up': () => 'Invalid username or password',
   '401-it': () => 'Invalid Token',
   '401-et': () => 'Expired Token',
   'e00000': () => 'Malformed ID',

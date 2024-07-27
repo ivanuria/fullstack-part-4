@@ -168,4 +168,19 @@ describe('user administration', async () => {
       assert.strictEqual(usersAtStart.length, usersAtEnd.length)
     })
   })
+
+  describe('post /api/login', async () => {
+    test('correct login', async () => {
+      const result = await api
+        .post('/api/login')
+        .send({
+          username: rootUser.username,
+          password: rootUser.password
+        })
+        .expect(200)
+        .expect('Content-type', /application\/json/)
+
+      console.log(result.body)
+    })
+  })
 })

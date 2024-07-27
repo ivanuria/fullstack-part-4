@@ -20,7 +20,7 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  currentHash: {
+  hash: {
     type: String
   },
   expiresAt: {
@@ -34,6 +34,6 @@ const userSchema = new Schema({
   ]
 })
 
-userSchema.set('toJSON', jsonResponseHandler(['passwordHash', 'currentHash']))
+userSchema.set('toJSON', jsonResponseHandler(['passwordHash', 'hash']))
 
 module.exports = model('User', userSchema)

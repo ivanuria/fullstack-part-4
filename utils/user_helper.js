@@ -11,8 +11,11 @@ const getAllUsers = async () => {
   return users.map(user => user.toJSON())
 }
 
-const getUserByUsername = async (username) => {
+const getUserByUsername = async (username, raw=false) => {
   const user = await User.findOne({ username })
+  if (raw) {
+    return user
+  }
   return user.toJSON()
 }
 
