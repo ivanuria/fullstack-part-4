@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const config = require('./config')
 const { getUser } = require('./user_helper')
 
-const errorHandler = (error, request, response, next) => { // Not Tested Yet
+const errorHandler = (error, request, response, next) => {
   logger.error('Error', error.message)
   if (error.name === 'CastError') {
     return response.status(400).json(errors.getError('e00000', error))
