@@ -29,7 +29,7 @@ blogsRoutes.post('/', middleware.restricted, async (request, response) => {
 
   const result = await blog.save()
 
-  await (user.id, {
+  await updateUser(user.id, {
     blogs: user.blogs.concat(result._id.toString())
   })
 
